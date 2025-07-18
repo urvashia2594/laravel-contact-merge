@@ -19,7 +19,9 @@ yarn-error.log
 /.vscode
 
 /storage/*
-
+!/storage/app
+!/storage/app/public
+!/storage/logs
 
 /public/ProfileImage/*
 !/public/ProfileImage/.gitignore
