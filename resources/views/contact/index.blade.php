@@ -9,7 +9,6 @@
         </div>
         <div class="col-md-6 text-md-end">
             <a class="btn btn-success me-2" href="{{ route('contact.create') }}">Create New Contact</a>
-            <button class="btn btn-warning" id="mergeContactsBtn">Merge Contacts</button>
         </div>
     </div>
 
