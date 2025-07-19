@@ -139,10 +139,10 @@ class ContactApiController extends Controller
             $secondory_contact_id = $request->secondory_contact_id;
         
             //call function to merge
-            $this->merging_logic($master_id, $secondory_contact_id);
+            $merge_contact = $this->merging_logic($master_id, $secondory_contact_id);
             return response()->json(['success' => true, 'message' => 'Contact merged successfully', 'data' => new MergeContactResource($merge_contact)]);
         }catch(Exception $e){
-            Log::info("Issue while mergeing contact for {$secondory_data['email']}: " . $e->getMessage());
+            Log::info("Issue while mergeing contact for {$secondory_contact_id}: " . $e->getMessage());
 
             return response()->json(['success' => false, 'message' => 'Something went wrong', 'data' => '']);
         }
@@ -165,7 +165,15 @@ class ContactApiController extends Controller
                     ->toArray();
     
         $mergedJson = json_encode($merged, JSON_PRETTY_PRINT);
-    
+
+        //check if relation exist then delete in case of call this function from update
+
+        //if yoy  want to keep track the force delete
+        // ContactsMerge::where('contact_uuid',$master_id)->where('contact_child_uuid',$secondory_contact_id)->delete();
+
+        //if yoy dont want to keep track the force delete
+            ContactsMerge::where('contact_uuid',$master_id)->where('contact_child_uuid',$secondory_contact_id)->forceDelete();
+
         // Save merged result in new table
         $merge_contact = ContactsMerge::create([
             'contact_uuid' => $master_id,
@@ -178,6 +186,8 @@ class ContactApiController extends Controller
         // mark secondory as not master
         $secondory_data->is_master = 0;
         $secondory_data->save();
+
+        return $merge_contact;
     }
 
 }
